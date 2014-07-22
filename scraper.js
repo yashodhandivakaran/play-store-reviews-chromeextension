@@ -47,6 +47,21 @@ var PlayStoreReview = function(node){
   this.author = info[0].textContent;
   this.date = info[1].textContent;
   this.time = info[2].textContent;
+  
+  //check if date i.e day not today and yesterday return false
+	var todayTimeStamp = +new Date; // Unix timestamp in milliseconds
+	var oneDayTimeStamp = 1000 * 60 * 60 * 24; // Milliseconds in a day
+	var diff = todayTimeStamp - oneDayTimeStamp;
+	var todayDate = new Date(todayTimeStamp);
+	var todayString = todayDate.getFullYear() + '-' + (todayDate.getMonth() + 1) + '-' + todayDate.getDate();
+	var yesterdayDate = new Date(diff);
+	var yesterdayString = yesterdayDate.getFullYear() + '-' + (yesterdayDate.getMonth() + 1) + '-' + yesterdayDate.getDate();
+	
+	/*if(this.date != todayString && this.date != yesterdayString)
+	{
+		return false;
+	}*/
+  
   // text
   var text = node.getElementsByTagName('p')[0].textContent;
   this.title = "";
@@ -150,6 +165,12 @@ PlayStoreScraper.getReviews = function getReviews(){
   for(var i=0; i<reviews.length; i++){
       review = reviews[i];
       psr = new PlayStoreReview(review);
+      
+      //if not review not in specified date then don't process rest
+      /*if(psr == false)
+      {
+		  break;
+	  }*/
       if(PlayerStoreData.reviews.length > 0 && 
           PlayerStoreData.reviews.length > reviews.length &&
           PlayerStoreData.reviews[PlayerStoreData.reviews.length-reviews.length].isTheSameAs(psr)){
