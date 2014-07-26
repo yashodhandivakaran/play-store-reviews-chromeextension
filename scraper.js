@@ -23,83 +23,69 @@
 // of a review.
 //
 var PlayStoreReview = function(node){
-  var that = this;
-  // appdata. pretty awesome, right? 
-  var appdata = node.parentNode.parentNode.parentNode
-                  .getElementsByTagName('td')[0]
-                  .getElementsByTagName('div')[0]
-                  .getElementsByTagName('div')[0]
-                  .getElementsByTagName('p');
-  this.stars = appdata[0].title.split(' ')[0];
-  if(appdata.length>1){
-    var nextSection = appdata[1].textContent;
-    if(nextSection.indexOf('App v')===0){
-        this.version = nextSection.replace('App version ','');
-    } else {
-        this.device = nextSection;
-    }
-  }
-  if(appdata.length>2 && !this.device){
-    this.device = appdata[2].textContent;
-  }
-  // info
-  var info = node.getElementsByTagName('strong');
-  this.author = info[0].textContent;
-  this.date = info[1].textContent;
-  this.time = info[2].textContent;
-  
-  //check if date i.e day not today and yesterday return false
-	var todayTimeStamp = +new Date; // Unix timestamp in milliseconds
-	var oneDayTimeStamp = 1000 * 60 * 60 * 24; // Milliseconds in a day
-	var diff = todayTimeStamp - oneDayTimeStamp;
-	var todayDate = new Date(todayTimeStamp);
-	var todayString = todayDate.getFullYear() + '-' + (todayDate.getMonth() + 1) + '-' + todayDate.getDate();
-	var yesterdayDate = new Date(diff);
-	var yesterdayString = yesterdayDate.getFullYear() + '-' + (yesterdayDate.getMonth() + 1) + '-' + yesterdayDate.getDate();
-	
-	/*if(this.date != todayString && this.date != yesterdayString)
-	{
-		return false;
-	}*/
-  
-  // text
-  var text = node.getElementsByTagName('p')[0].textContent;
-  this.title = "";
-  this.text = "";
-  if(text.length>0){
-    var titleIndex = text.indexOf('\t');
-    if(titleIndex>-1){
-      this.title = text.substring(0,titleIndex);
-      this.text = text.substring(titleIndex+'\t'.length);
-    } else {
-      this.text = text;
-    }
-  }
-  if(this.text){
-    // TODO: should really maintain the original language
-    this.text = this.text.replace(' Show original review','');
-  }
-  this.isTheSameAs = function isTheSameAs(review){
-    if(review.stars == that.stars && 
-        review.author == that.author &&
-        review.date == that.date &&
-        review.time == that.time){
-      return true;
-    }
-    return false;
-  }
-  this.toJSON = function toJSON(){
-    var ret = {};
-    for(var prop in that){
-      if(that.hasOwnProperty(prop)){
-        var v = that[prop];
-        if(typeof(v) !== 'function'){
-          ret[prop] = v;
+    var that = this;
+    // appdata. pretty awesome, right?
+    var appdata = node.parentNode.parentNode.parentNode
+        .getElementsByTagName('td')[0]
+        .getElementsByTagName('div')[0]
+        .getElementsByTagName('div')[0]
+        .getElementsByTagName('p');
+    this.stars = appdata[0].title.split(' ')[0];
+    if(appdata.length>1){
+        var nextSection = appdata[1].textContent;
+        if(nextSection.indexOf('App v')===0){
+            this.version = nextSection.replace('App version ','');
+        } else {
+            this.device = nextSection;
         }
-      }
     }
-    return ret;
-  }
+    if(appdata.length>2 && !this.device){
+        this.device = appdata[2].textContent;
+    }
+    // info
+    var info = node.getElementsByTagName('strong');
+    this.author = info[0].textContent;
+    this.date = info[1].textContent;
+    this.time = info[2].textContent;
+
+    // text
+    var text = node.getElementsByTagName('p')[0].textContent;
+    this.title = "";
+    this.text = "";
+    if(text.length>0){
+        var titleIndex = text.indexOf('\t');
+        if(titleIndex>-1){
+            this.title = text.substring(0,titleIndex);
+            this.text = text.substring(titleIndex+'\t'.length);
+        } else {
+            this.text = text;
+        }
+    }
+    if(this.text){
+        // TODO: should really maintain the original language
+        this.text = this.text.replace(' Show original review','');
+    }
+    this.isTheSameAs = function isTheSameAs(review){
+        if(review.stars == that.stars &&
+            review.author == that.author &&
+            review.date == that.date &&
+            review.time == that.time){
+            return true;
+        }
+        return false;
+    }
+    this.toJSON = function toJSON(){
+        var ret = {};
+        for(var prop in that){
+            if(that.hasOwnProperty(prop)){
+                var v = that[prop];
+                if(typeof(v) !== 'function'){
+                    ret[prop] = v;
+                }
+            }
+        }
+        return ret;
+    }
 };
 
 //
@@ -124,14 +110,14 @@ var PlayStoreScraper = {};
 // Config params
 //
 var PlayStoreScraperConfig = {
-  'delayTimeout': 1500,
-  'nextpageDelayTimeout': 2500,
-  'playStoreURI': 'play.google.com/apps/publish',
-  'reviewExpr': '[data-column="review"]',
-  'nextPageText': '▶',
-  'reviewsURIFragment': 'ReviewsPlace',
-  'homeURIFragment': 'AppListPlace',
-  'packageSep': ':p='
+    'delayTimeout': 1500,
+    'nextpageDelayTimeout': 2500,
+    'playStoreURI': 'play.google.com/apps/publish',
+    'reviewExpr': '[data-column="review"]',
+    'nextPageText': '▶',
+    'reviewsURIFragment': 'ReviewsPlace',
+    'homeURIFragment': 'AppListPlace',
+    'packageSep': ':p='
 };
 
 //
@@ -139,10 +125,10 @@ var PlayStoreScraperConfig = {
 // Initializes and kicks off the scraper
 //
 PlayStoreScraper.init = function init(){
-  var url = window.location.href;
-  if(url.indexOf(PlayStoreScraperConfig.playStoreURI)>-1){
-    PlayStoreScraper.go(window, document);
-  }
+    var url = window.location.href;
+    if(url.indexOf(PlayStoreScraperConfig.playStoreURI)>-1){
+        PlayStoreScraper.go(window, document);
+    }
 };
 
 //
@@ -152,36 +138,60 @@ PlayStoreScraper.init = function init(){
 // 
 //
 PlayStoreScraper.getReviews = function getReviews(){
-  var nextButtonId = PlayStoreScraper.getNextButton();
-  if(nextButtonId == null){
-    console.log("error: couldn't find next button");
-    return;
-  }
-  var reviews = document.querySelectorAll(PlayStoreScraperConfig.reviewExpr);
-  if(reviews.length===0){
-    return;
-  }
-  var review, psr;
-  for(var i=0; i<reviews.length; i++){
-      review = reviews[i];
-      psr = new PlayStoreReview(review);
-      
-      //if not review not in specified date then don't process rest
-      /*if(psr == false)
-      {
-		  break;
-	  }*/
-      if(PlayerStoreData.reviews.length > 0 && 
-          PlayerStoreData.reviews.length > reviews.length &&
-          PlayerStoreData.reviews[PlayerStoreData.reviews.length-reviews.length].isTheSameAs(psr)){
-        PlayStoreScraper.done();
+    var nextButtonId = PlayStoreScraper.getNextButton();
+    if(nextButtonId == null){
+        console.log("error: couldn't find next button");
         return;
-      }
-      PlayerStoreData.reviews.push(psr);
-  }
-  PlayStoreScraper.notifyBackground();
-  nextButtonId.click();
-  setTimeout(PlayStoreScraper.getReviews,PlayStoreScraperConfig.nextpageDelayTimeout);
+    }
+    var reviews = document.querySelectorAll(PlayStoreScraperConfig.reviewExpr);
+    if(reviews.length===0){
+        return;
+    }
+    var review, psr;
+    for(var i=0; i<reviews.length; i++){
+        review = reviews[i];
+        psr = new PlayStoreReview(review);
+
+        //set reviews time limit
+        var time_till = Date.parse(date_limit.toString().trim()+':00');
+        var review_time_string = psr.time;
+        var hours = review_time_string.split(':')[0];
+        var minutes = review_time_string.split(':')[1].split(' ')[0];
+        var am_pm = review_time_string.split(' ')[1];
+
+        if(am_pm === 'AM' && hours == '12')
+        {
+            hours = '00';
+        }
+        else if(am_pm == 'PM' && hours != '12')
+        {
+            hours = (parseInt(hours)+12).toString();
+        }
+
+        if(hours.length == 1)
+        {
+            hours = '0'+hours;
+        }
+
+        var review_date_time = new Date(psr.date+' '+hours+':'+minutes+':00');
+        if(review_date_time < time_till)
+        {
+            PlayStoreScraper.done();
+            return;
+        }
+        //time limit end
+
+        if(PlayerStoreData.reviews.length > 0 &&
+            PlayerStoreData.reviews.length > reviews.length &&
+            PlayerStoreData.reviews[PlayerStoreData.reviews.length-reviews.length].isTheSameAs(psr)){
+            PlayStoreScraper.done();
+            return;
+        }
+        PlayerStoreData.reviews.push(psr);
+    }
+    PlayStoreScraper.notifyBackground();
+    nextButtonId.click();
+    setTimeout(PlayStoreScraper.getReviews,PlayStoreScraperConfig.nextpageDelayTimeout);
 }
 
 //
@@ -189,15 +199,15 @@ PlayStoreScraper.getReviews = function getReviews(){
 // A method to find the next button. This is dependent on the design.
 //
 PlayStoreScraper.getNextButton = function getNextButton(){
-  var buttons = document.getElementsByTagName('button');
-  var nextButton = null;
-  for(var i=0; buttons.length; i++){
-    if(buttons[i].textContent.indexOf(PlayStoreScraperConfig.nextPageText)>-1){
-      nextButton = buttons[i];
-      break;
+    var buttons = document.getElementsByTagName('button');
+    var nextButton = null;
+    for(var i=0; buttons.length; i++){
+        if(buttons[i].textContent.indexOf(PlayStoreScraperConfig.nextPageText)>-1){
+            nextButton = buttons[i];
+            break;
+        }
     }
-  }
-  return nextButton;
+    return nextButton;
 };
 
 //
@@ -206,38 +216,39 @@ PlayStoreScraper.getNextButton = function getNextButton(){
 //
 PlayStoreScraper.go = function go(win, doc){
 
-  var options = [], opts = [];
-  var loc = win.location.href;
-  var homeIndex = loc.indexOf('#'+PlayStoreScraperConfig.homeURIFragment);
-  var reviewsIndex = loc.indexOf('#'+PlayStoreScraperConfig.reviewsURIFragment);
+    var options = [], opts = [];
+    var loc = win.location.href;
+    var homeIndex = loc.indexOf('#'+PlayStoreScraperConfig.homeURIFragment);
+    var reviewsIndex = loc.indexOf('#'+PlayStoreScraperConfig.reviewsURIFragment);
 
-  // if on the first page... select an app
-  if(homeIndex>-1){
-    var links = doc.querySelectorAll('a');
-    var lnk;
-    for(var l=0; l<links.length; l++){
-      lnk = links[l];
-      if(lnk.href.indexOf(PlayStoreScraperConfig.reviewsURIFragment)>-1){
-        var app = lnk.parentNode.parentNode.parentNode.getElementsByTagName('td')[0].textContent;
-        options.push({'app':app,'reviewlink':lnk});
-        opts.push((opts.length+1)+'.\t'+app);
-      }
+    // if on the first page... select an app
+    if(homeIndex>-1){
+        var links = doc.querySelectorAll('a');
+        var lnk;
+        for(var l=0; l<links.length; l++){
+            lnk = links[l];
+            if(lnk.href.indexOf(PlayStoreScraperConfig.reviewsURIFragment)>-1){
+                var app = lnk.parentNode.parentNode.parentNode.getElementsByTagName('td')[0].textContent;
+                options.push({'app':app,'reviewlink':lnk});
+                opts.push((opts.length+1)+'.\t'+app);
+            }
+        }
+        var option = 0;
+        date_limit = prompt('Enter the time till which we get reviews:eg(July 22,2014 13:20)');
+        if(options.length>1){
+            option = prompt('Pick one of the following apps to download reviews for:\n'+opts.join('\n'));
+        }
+        try {
+            options[option-1]['reviewlink'].click();
+            setTimeout(PlayStoreScraper.getReviews,PlayStoreScraperConfig.delayTimeout);
+        } catch (ex) {
+            console.log('no app specified...');
+        }
     }
-    var option = 0;
-    if(options.length>1){
-      option = prompt('Pick one of the following apps to download reviews for:\n'+opts.join('\n'));
-    } 
-    try { 
-      options[option-1]['reviewlink'].click();
-      setTimeout(PlayStoreScraper.getReviews,PlayStoreScraperConfig.delayTimeout);
-    } catch (ex) { 
-      console.log('no app specified...');
+    // or if we're already on the reviews page
+    else if (reviewsIndex>-1) {
+        setTimeout(PlayStoreScraper.getReviews,PlayStoreScraperConfig.delayTimeout);
     }
-  } 
-  // or if we're already on the reviews page
-  else if (reviewsIndex>-1) {
-    setTimeout(PlayStoreScraper.getReviews,PlayStoreScraperConfig.delayTimeout);
-  }
 
 };
 
@@ -246,32 +257,85 @@ PlayStoreScraper.go = function go(win, doc){
 // When done, we will present the user with the reviews.
 //
 PlayStoreScraper.done = function done(){
-  
-  // file name
-  var pkg = window.location.href;
-  pkg = pkg.substring(pkg.indexOf(PlayStoreScraperConfig.packageSep)+PlayStoreScraperConfig.packageSep.length);
-  var d = new Date();
-  var ts = (d.getUTCMonth()+1)+'.'+d.getUTCDate()+'.'+d.getUTCFullYear();
 
-  alert("Done gathering "+PlayerStoreData.reviews.length+" reviews. Downloading zip now...");
-  
-  var reviewLines = [];
-  for(var r=0; r<PlayerStoreData.reviews.length; r++){
-    reviewLines.push(PlayerStoreData.reviews[r].toJSON());
-  }
-  
-  // zip up the download
-  var zip = new JSZip();
-  zip.file('appreviews_'+pkg+'_'+ts+'.json', JSON.stringify(reviewLines));
-  var blob = zip.generate({type:"blob"});
+    // file name
+    var pkg = window.location.href;
+    pkg = pkg.substring(pkg.indexOf(PlayStoreScraperConfig.packageSep)+PlayStoreScraperConfig.packageSep.length);
+    var d = new Date();
+    var ts = (d.getUTCMonth()+1)+'.'+d.getUTCDate()+'.'+d.getUTCFullYear();
 
-  // download
-  window.location.href = window.URL.createObjectURL(blob);
+    alert("Done gathering "+PlayerStoreData.reviews.length+" reviews. Downloading zip now...");
+
+    var reviewLines = [];
+
+    //rating array
+    var five_star ='' ;
+    var four_star = '';
+    var three_star = '';
+    var two_star = '';
+    var one_star = '';
+    var review_data;
+    for(var r=0; r<PlayerStoreData.reviews.length; r++){
+        review_data =  PlayerStoreData.reviews[r].toJSON()
+        reviewLines.push(review_data);
+        switch(review_data.stars)
+        {
+            case '5':
+                if(review_data.title.length > 0)
+                {
+                    five_star = five_star +review_data.title.trim()+" - "
+                }
+                five_star = five_star + review_data.text.trim()+"\nBy: "+review_data.author.trim()+"\n\n";
+                break;
+            case '4':
+                if(review_data.title.length > 0)
+                {
+                    four_star = four_star +review_data.title.trim()+" - "
+                }
+                four_star = four_star + review_data.text.trim()+"\nBy: "+review_data.author.trim()+"\n\n";
+                break;
+            case '3':
+                if(review_data.title.length > 0)
+                {
+                    three_star = three_star +review_data.title.trim()+" - "
+                }
+                three_star = three_star + review_data.text.trim()+"\nBy: "+review_data.author.trim()+"\n\n";
+                break;
+            case '2':
+                if(review_data.title.length > 0)
+                {
+                    two_star = two_star +review_data.title.trim()+" - "
+                }
+                two_star = two_star + review_data.text.trim()+"\nBy: "+review_data.author.trim()+"\n\n";
+                break;
+            case '1':
+                if(review_data.title.length > 0)
+                {
+                    one_star = one_star +review_data.title.trim()+" - "
+                }
+                one_star = one_star + review_data.text.trim()+"\nBy: "+review_data.author.trim()+"\n\n";
+                break;
+        }
+    }
+    
+    //custom output format
+    var output = "5 Stars\n\n"+five_star+
+        "4 Stars\n\n"+four_star+
+        "3 Stars\n\n"+three_star+
+        "2 Stars\n\n"+two_star+
+        "1 Stars\n\n"+one_star;
+    // zip up the download
+    var zip = new JSZip();
+    zip.file('appreviews_'+pkg+'_'+ts+'.txt',output.toString().trim());
+    var blob = zip.generate({type:"blob"});
+
+    // download
+    window.location.href = window.URL.createObjectURL(blob);
 
 }
 
 PlayStoreScraper.notifyBackground = function notifyBackground(){
-  chrome.runtime.sendMessage({numReviews:String(PlayerStoreData.reviews.length)});
+    chrome.runtime.sendMessage({numReviews:String(PlayerStoreData.reviews.length)});
 }
 
 //
@@ -279,12 +343,12 @@ PlayStoreScraper.notifyBackground = function notifyBackground(){
 //
 document.onreadystatechange = function() {
     if (document.readyState === 'complete') {
-      // setTimeout(PlayStoreScraper.init,2000);
-      PlayStoreScraper.notifyBackground();
-      chrome.runtime.onMessage.addListener(
-        function(request, sender, sendResponse) {
-          if (request.numReviews)
-            PlayStoreScraper.notifyBackground();
-        });
+        // setTimeout(PlayStoreScraper.init,2000);
+        PlayStoreScraper.notifyBackground();
+        chrome.runtime.onMessage.addListener(
+            function(request, sender, sendResponse) {
+                if (request.numReviews)
+                    PlayStoreScraper.notifyBackground();
+            });
     }
 };
