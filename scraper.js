@@ -270,10 +270,20 @@ PlayStoreScraper.done = function done(){
 
     //rating array
     var five_star ='' ;
+    var five_star_count = 1;
+
     var four_star = '';
+    var four_star_count = 1;
+
     var three_star = '';
+    var three_star_count = 1;
+
     var two_star = '';
+    var two_star_count = 1;
+
     var one_star = '';
+    var one_star_count = 1;
+
     var review_data;
     for(var r=0; r<PlayerStoreData.reviews.length; r++){
         review_data =  PlayerStoreData.reviews[r].toJSON()
@@ -281,49 +291,67 @@ PlayStoreScraper.done = function done(){
         switch(review_data.stars)
         {
             case '5':
+                five_star = five_star + five_star_count.toString()+") ";
                 if(review_data.title.length > 0)
                 {
                     five_star = five_star +review_data.title.trim()+" - "
                 }
                 five_star = five_star + review_data.text.trim()+"\nBy: "+review_data.author.trim()+"\n\n";
+                five_star_count++;
                 break;
             case '4':
+                four_star = four_star + four_star_count.toString()+") ";
                 if(review_data.title.length > 0)
                 {
                     four_star = four_star +review_data.title.trim()+" - "
                 }
                 four_star = four_star + review_data.text.trim()+"\nBy: "+review_data.author.trim()+"\n\n";
+                four_star_count++;
                 break;
             case '3':
+                three_star = three_star + three_star_count.toString()+") ";
                 if(review_data.title.length > 0)
                 {
                     three_star = three_star +review_data.title.trim()+" - "
                 }
                 three_star = three_star + review_data.text.trim()+"\nBy: "+review_data.author.trim()+"\n\n";
+                three_star_count++;
                 break;
             case '2':
+                two_star = two_star + two_star_count.toString()+") ";
                 if(review_data.title.length > 0)
                 {
                     two_star = two_star +review_data.title.trim()+" - "
                 }
                 two_star = two_star + review_data.text.trim()+"\nBy: "+review_data.author.trim()+"\n\n";
+                two_star_count++;
                 break;
             case '1':
+                one_star = one_star + one_star_count.toString()+") ";
                 if(review_data.title.length > 0)
                 {
                     one_star = one_star +review_data.title.trim()+" - "
                 }
                 one_star = one_star + review_data.text.trim()+"\nBy: "+review_data.author.trim()+"\n\n";
+                one_star_count++;
                 break;
         }
     }
     
     //custom output format
-    var output = "5 Stars\n\n"+five_star+
-        "4 Stars\n\n"+four_star+
-        "3 Stars\n\n"+three_star+
+    var heading = "1 Star reviews - "+(one_star_count - 1)+"\n"+
+        "2 Star reviews - "+(two_star_count - 1)+"\n"+
+        "3 Star reviews - "+(three_star_count - 1)+"\n"+
+        "4 Star reviews - "+(four_star_count - 1)+"\n"+
+        "5 Star reviews - "+(five_star_count - 1)+"\n"+
+        "TOTAL - "+(one_star_count+two_star_count+three_star_count+four_star_count+five_star_count - 5)+"\n\n"
+
+    var output = heading+
+        "1 Stars\n\n"+one_star+
         "2 Stars\n\n"+two_star+
-        "1 Stars\n\n"+one_star;
+        "3 Stars\n\n"+three_star+
+        "4 Stars\n\n"+four_star+
+        "5 Stars\n\n"+five_star;
     // zip up the download
     var zip = new JSZip();
     zip.file('appreviews_'+pkg+'_'+ts+'.txt',output.toString().trim());

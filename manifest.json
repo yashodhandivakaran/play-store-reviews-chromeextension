@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Play Store Reviews",
   "description": "Get all your Play Store Reviews in a JSON file, packaged in a zip container.",
-  "version": "1.2",
+  "version": "1.4",
   "permissions": [
     "https://play.google.com/",
     "tabs",
