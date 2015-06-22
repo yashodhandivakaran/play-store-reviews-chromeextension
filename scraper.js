@@ -49,7 +49,7 @@ var PlayStoreReview = function(node){
     this.time = info[2].textContent;
 
     // text
-    var text = node.getElementsByTagName('p')[0].textContent;
+    var text = node.getElementsByTagName('pre')[0].textContent;
     this.title = "";
     this.text = "";
     if(text.length>0){
