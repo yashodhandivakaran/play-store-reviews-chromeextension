@@ -24,47 +24,26 @@
 //
 var PlayStoreReview = function(node){
     var that = this;
-    // appdata. pretty awesome, right?
-    var appdata = node.parentNode.parentNode.parentNode
-        .getElementsByTagName('td')[0]
-        .getElementsByTagName('div')[0]
-        .getElementsByTagName('div')[0]
-        .getElementsByTagName('p');
-    this.stars = appdata[0].title.split(' ')[0];
-    if(appdata.length>1){
-        var nextSection = appdata[1].textContent;
-        if(nextSection.indexOf('App v')===0){
-            this.version = nextSection.replace('App version ','');
-        } else {
-            this.device = nextSection;
-        }
-    }
-    if(appdata.length>2 && !this.device){
-        this.device = appdata[2].textContent;
-    }
-    // info
-    var info = node.getElementsByTagName('strong');
-    this.author = info[0].textContent;
-    this.date = info[1].textContent;
-    this.time = info[2].textContent;
 
-    // text
-    var text = node.getElementsByTagName('pre')[0].textContent;
-    this.title = "";
-    this.text = "";
-    if(text.length>0){
-        var titleIndex = text.indexOf('\t');
-        if(titleIndex>-1){
-            this.title = text.substring(0,titleIndex);
-            this.text = text.substring(titleIndex+'\t'.length);
-        } else {
-            this.text = text;
-        }
-    }
-    if(this.text){
-        // TODO: should really maintain the original language
-        this.text = this.text.replace(' Show original review','');
-    }
+    var reviewContainer = node.parentNode.children;
+
+    var reviewData = reviewContainer[0];
+    var metaInfo = reviewContainer[1];
+
+    var reviewDataInner = reviewData.children[1];
+
+    this.author = reviewDataInner.firstElementChild.getElementsByTagName('strong')[0].textContent;
+    this.date = reviewDataInner.firstElementChild.childNodes[1].textContent.split("at")[0].trim();
+    this.time = reviewDataInner.firstElementChild.childNodes[1].textContent.split("at")[1].trim();
+
+    this.stars = reviewDataInner.getElementsByTagName('p')[0].getElementsByTagName('span')[1].getAttribute('title').charAt(0);
+
+    this.title = reviewDataInner.getElementsByTagName('div')[0].getElementsByTagName('pre')[0].firstElementChild.textContent
+    this.text = reviewDataInner.getElementsByTagName('div')[0].getElementsByTagName('pre')[0].lastElementChild.textContent
+
+    this.version = metaInfo.firstElementChild.textContent.split(":")[1];
+    this.device = metaInfo.lastElementChild.textContent.split(":")[1];
+
     this.isTheSameAs = function isTheSameAs(review){
         if(review.stars == that.stars &&
             review.author == that.author &&
@@ -113,7 +92,7 @@ var PlayStoreScraperConfig = {
     'delayTimeout': 1500,
     'nextpageDelayTimeout': 2500,
     'playStoreURI': 'play.google.com/apps/publish',
-    'reviewExpr': '[data-column="review"]',
+    'reviewExpr': '.N2DAHLD-Xh-c',
     'nextPageText': '▶',
     'reviewsURIFragment': 'ReviewsPlace',
     'homeURIFragment': 'AppListPlace',
@@ -145,8 +124,10 @@ PlayStoreScraper.getReviews = function getReviews(){
     }
     var reviews = document.querySelectorAll(PlayStoreScraperConfig.reviewExpr);
     if(reviews.length===0){
+        console.log("No reviews found")
         return;
     }
+
     var review, psr;
     for(var i=0; i<reviews.length; i++){
         review = reviews[i];
