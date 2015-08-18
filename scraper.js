@@ -92,7 +92,7 @@ var PlayStoreScraperConfig = {
     'delayTimeout': 1500,
     'nextpageDelayTimeout': 2500,
     'playStoreURI': 'play.google.com/apps/publish',
-    'reviewExpr': '.N2DAHLD-Xh-c',
+    'reviewExpr': '.C5SG1W-Wh-c',
     'nextPageText': '▶',
     'reviewsURIFragment': 'ReviewsPlace',
     'homeURIFragment': 'AppListPlace',
