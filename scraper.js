@@ -92,7 +92,7 @@ var PlayStoreScraperConfig = {
     'delayTimeout': 1500,
     'nextpageDelayTimeout': 2500,
     'playStoreURI': 'play.google.com/apps/publish',
-    'reviewExpr': '.C5SG1W-Wh-c',
+    'reviewExpr': '.NPXKOCB-Xh-c',
     'nextPageText': '▶',
     'reviewsURIFragment': 'ReviewsPlace',
     'homeURIFragment': 'AppListPlace',
@@ -123,9 +123,10 @@ PlayStoreScraper.getReviews = function getReviews(){
         return;
     }
     var reviews = document.querySelectorAll(PlayStoreScraperConfig.reviewExpr);
-    if(reviews.length===0){
+    while(reviews.length===0){
+        globalreviewExpr = prompt('Extension is not able to find any reviews. Maybe review div class is updated, please enter the new class')
         console.log("No reviews found")
-        return;
+        reviews = document.querySelectorAll('.'+globalreviewExpr);
     }
 
     var review, psr;
