@@ -33,8 +33,8 @@ var PlayStoreReview = function(node){
     var reviewDataInner = reviewData.children[1];
 
     this.author = reviewDataInner.firstElementChild.getElementsByTagName('strong')[0].textContent;
-    this.date = reviewDataInner.firstElementChild.childNodes[1].textContent.split("at")[0].trim();
-    this.time = reviewDataInner.firstElementChild.childNodes[1].textContent.split("at")[1].trim();
+    this.date = reviewDataInner.firstElementChild.childNodes[1].textContent.split(" at ")[0].trim();
+    this.time = reviewDataInner.firstElementChild.childNodes[1].textContent.split(" at ")[1].trim();
 
     this.stars = reviewDataInner.getElementsByTagName('p')[0].getElementsByTagName('span')[1].getAttribute('title').charAt(0);
 
@@ -125,8 +125,9 @@ PlayStoreScraper.getReviews = function getReviews(){
     var reviews = document.querySelectorAll(PlayStoreScraperConfig.reviewExpr);
     while(reviews.length===0){
         globalreviewExpr = prompt('Extension is not able to find any reviews. Maybe review div class is updated, please enter the new class')
-        console.log("No reviews found")
-        reviews = document.querySelectorAll('.'+globalreviewExpr);
+        console.log("No reviews found");
+        PlayStoreScraperConfig.reviewExpr = '.'+globalreviewExpr;
+        reviews = document.querySelectorAll(PlayStoreScraperConfig.reviewExpr);
     }
 
     var review, psr;
